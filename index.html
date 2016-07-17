@@ -1,8 +1,80 @@
 <head>
+	<title>repree Style Guide</title>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css">
+	<style>
+		li {
+			padding-bottom: 10px;
+		}
+	</style>
 </head>
-<body>
-<h1>Title</h1>
-	<p>
-		Content
-	</p>
+<body class="container">
+	<div class="offset2 span8">
+		<h2>Repree Style Guide</h2>
+		<p>
+			As our team grows and more people are touching the codebase, a common set of conventions and design patterns 
+			will help us get new developers get up to speed with the code, improve readability, and simplify code reviews.
+		</p>
+		<p>
+			This style guide is divided into the following sections:
+			<ul>
+				<li><a href="#naming-conventions">Naming Conventions (In Progress)</a></li>
+				<li>Code Style</li>
+				<li>Design Patterns (To be created)</li>
+			</ul>
+		</p>
+		<!--<p style="height: 800px">Test</p>-->
+		<div id="NamingConventions">
+			<a name="naming-conventions"></a>
+			<h3>Naming Conventions</h3>
+			<ul>
+				<li>
+					<h5>Server-side (C#)</h5>
+					<ul>
+						<li>
+							Use camelCase for variables names, avoid abbreviations <br/>
+							Use <code>var</code> if the type can be inferred from the right side, otherwise declare the type explicitly<br/>
+							<code>var someVariable = "This variable is named with camelCase";</code><br/>
+							<code>List&lt;CustomObject&gt; anotherVariable = GetStuff();</code><br/>
+							Prefix member variables with an underscore (_) <br/>
+							<code>private readonly _privateVariable = new PrivateVariableFactory();</code><br/>
+							Use ALL_CAPS for constants; use underscores to separate words
+							<code>public const int MEANING_OF_LIFE = 42;</code><br/>
+						</li>
+						<li>
+							Use PascalCase for function, property, and class names. <br/>
+							Method names should also be of the form Action-Object and should describe what the method does<br/>
+							Parameters should use camelCase.<br/>
+							Comments all methods. Briefly describe the intended behaviour. Note any assumptions and non-standard patterns. 
+<pre>
+/// &lt;summary&gt;
+/// Retrieves an object based on an identifier
+/// &lt;/summary&gt;
+/// &lt;param name="someVar"&gt;Unique identifier for the object&lt;param&gt;
+public object GetObject(Guid someVar)
+{
+  ...
+}
+
+public class MyObject{
+  public Guid ObjectId {get; set;}
+  public string ObjectName {get; set;}
+  ...
+}
+</pre>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		
+		<div id="Sources">
+			<h3>Sources and Inspirations</h3>
+			<ul>
+				<li><a href="https://github.com/airbnb/javascript" target="_blank">AirBnb Javascript Style Guide</a>
+				<li><a href="https://blogs.msdn.microsoft.com/brada/2005/01/26/internal-coding-guidelines/" target="_blank">Microsoft Internal Coding Guidelines</a>
+			</ul>
+		</div>
+	</div>
 </body>
