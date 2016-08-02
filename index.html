@@ -1,0 +1,214 @@
+<head>
+	<title>repree Style Guide</title>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css">
+	<style>
+		li {
+			padding-bottom: 10px;
+		}
+	</style>
+</head>
+<body class="container">
+	<div class="offset2 span8">
+		<h2>Repree Style Guide</h2>
+		<p>
+			As our team grows and more people are touching the codebase, a common set of conventions and design patterns 
+			will help us get new developers get up to speed with the code, improve readability, and simplify code reviews.
+		</p>
+		<p>
+			This style guide is divided into the following sections:
+			<ul>
+				<li><a href="#naming-conventions">Naming Conventions (In Progress)</a></li>
+				<li><a href="#code-style">Code Style</a></li>
+				<li><a href="#design-patterns">Design Patterns</a></li>
+			</ul>
+		</p>
+		<div id="NamingConventions">
+			<a name="naming-conventions"></a>
+			<h3>Naming Conventions</h3>
+			<ul>
+				<li>
+					<h5>Server-side (C#)</h5>
+					<ul>
+						<li>
+							Use camelCase for variables names, avoid abbreviations
+						</li>
+						<li>
+							Use <code>var</code> if the type can be inferred from the right side, otherwise declare the type explicitly<br/>
+							<code>var someVariable = "This variable is named with camelCase";</code><br/>
+							<code>List&lt;CustomObject&gt; anotherVariable = GetStuff();</code>
+						</li>
+						<li>
+							Prefix member variables with an underscore (_) <br/>
+							<code>private readonly _privateVariable = new PrivateVariableFactory();</code>
+						</li>
+						<li>
+							Use ALL_CAPS for constants; use underscores to separate words
+							<code>public const int MEANING_OF_LIFE = 42;</code>
+						</li>
+						<li>
+							Use PascalCase for function, property, and class names.
+						</li>
+						<li>
+							Method names should also be of the form Action-Object and should describe what the method does
+						</li>
+						<li>
+							Parameters should use camelCase.
+						</li>
+						<li>
+							Comments all methods. Briefly describe the intended behaviour. Note any assumptions and non-standard patterns. 
+						</li>
+<pre>
+/// &lt;summary&gt;
+/// Retrieves an object based on an identifier
+/// &lt;/summary&gt;
+/// &lt;param name="someVar"&gt;Unique identifier for the object&lt;param&gt;
+public object GetObject(Guid someVar)
+{
+  ...
+}
+
+public class MyObject{
+  public Guid ObjectId {get; set;}
+  public string ObjectName {get; set;}
+  ...
+}
+</pre>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		
+		
+		<div id="CodeStyle">
+			<a name="code-style"></a>
+			<h3>Code Style</h3>
+			<p>Under Development</p>
+		</div>
+		
+		<div id="DesignPatterns">
+			<a name="design-patterns"></a>
+			<h3>Design Patterns</h3>
+			<p>Under Development</p>
+			<ul>
+				<li>
+					<h5>Server-side (C#)</h5>
+					<ul>
+						<li>
+							Wrap all code in try-catch blocks for exception handling. If possible handle different exception types 
+							separately in order to provide better feedback.
+<pre>
+try 
+{
+	...
+}
+catch (IOException e)
+{
+	//Handle this type of exception
+	...
+}
+catch (Exception e)
+{
+	//Generic handler for all other exception types
+	...
+}
+</pre>
+						</li>
+						<li>
+							If required, create your own custom exception classes to help with exception handling.
+<pre>
+public class EmployeeListNotFoundException: Exception
+{
+    public EmployeeListNotFoundException()
+    {
+    }
+
+    public EmployeeListNotFoundException(string message)
+        : base(message)
+    {
+    }
+
+    public EmployeeListNotFoundException(string message, Exception inner)
+        : base(message, inner)
+    {
+    }
+}
+</pre>
+						</li>
+						<li>
+							Where possible handle potential issues explicitly without the use of exceptions as exception handling is slow. 
+							Exception handling should capture unexpected and erroneous behaviour.
+<pre>
+//Good
+var data = GetData(userId)
+if (data == null) return "Data not found"
+return data.Username;
+
+//Bad
+try
+{
+	var data = GetData(userId);
+	return data.Username;
+}
+catch (Exception e)
+{
+	return "Data not found";
+}
+</pre>
+						</li>
+						<li>
+							Log all exceptions with a call to <code>Error.LogError([message], [exception], [parameters])</code><br/>
+							This automatically sends exceptions to the Glip notification channel, App Insight, and to the EventLog.<br/>
+							Note that parameters can be logged to App Insights via a <code>Dictionary&lt;string,string&gt;</code> object.
+							Use this to include data that may be useful for troubleshooting purposes. Err on the side of including too much rather than too little!
+						</li>
+						<li>
+							When accessing the database, use the <code> using (var db = new repreeContext()){...} </code> pattern unless 
+							there is a specific reason (e.g. performance, caching, etc.) to maintain a long-running dbcontext.
+						</li>
+						<li>
+							Do not query the database directly from the Controller class. All db operations should be made from the data layer<br/>
+<pre>
+public class SampleController : Controller
+{
+	...
+	[Authorize, HttpGet]
+	public ActionResult User(Guid userId)
+	{
+		var userDetails = UserData.GetUserDetails(userId);
+		
+		//work with userDetails to convert to proper return format
+	}
+	...
+}
+
+public class UserData
+{
+	...
+	public static UserDetails GetUserDetails(Guid userId){
+		using (var db = new repreeContext())
+		{
+			return db.UserDetails
+				.FirstOrDefault(u => u.UserId == userId);
+		}
+	}
+	...
+}
+</pre>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		
+		<div id="Sources">
+			<h3>Sources, Inspirations, and References</h3>
+			<ul>
+				<li><a href="https://github.com/airbnb/javascript" target="_blank">AirBnb Javascript Style Guide</a>
+				<li><a href="https://blogs.msdn.microsoft.com/brada/2005/01/26/internal-coding-guidelines/" target="_blank">Microsoft Internal Coding Guidelines</a>
+			</ul>
+		</div>
+	</div>
+</body>
