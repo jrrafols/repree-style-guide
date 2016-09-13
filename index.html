@@ -19,7 +19,7 @@
 		<p>
 			This style guide is divided into the following sections:
 			<ul>
-				<li><a href="#naming-conventions">Naming Conventions (In Progress)</a></li>
+				<li><a href="#naming-conventions">Naming Conventions</a></li>
 				<li><a href="#code-style">Code Style</a></li>
 				<li><a href="#design-patterns">Design Patterns</a></li>
 			</ul>
@@ -30,36 +30,36 @@
 			<ul>
 				<li>
 					<h5>Server-side (C#)</h5>
-					<ul>
-						<li>
+					<ul name="naming-c">
+						<li name="variable-names">
 							Use camelCase for variables names, avoid abbreviations
 						</li>
-						<li>
+						<li name="use-var">
 							Use <code>var</code> if the type can be inferred from the right side, otherwise declare the type explicitly<br/>
 							<code>var someVariable = "This variable is named with camelCase";</code><br/>
 							<code>List&lt;CustomObject&gt; anotherVariable = GetStuff();</code>
 						</li>
-						<li>
+						<li name="member-vars">
 							Prefix member variables with an underscore (_) <br/>
 							<code>private readonly _privateVariable = new PrivateVariableFactory();</code>
 						</li>
-						<li>
+						<li name="constants">
 							Use ALL_CAPS for constants; use underscores to separate words
 							<code>public const int MEANING_OF_LIFE = 42;</code>
 						</li>
-						<li>
-							Use PascalCase for function, property, and class names.
+						<li name="method-name-case">
+							Use PascalCase for method, property, and class names.
 						</li>
-						<li>
+						<li name="method-name">
 							Method names should also be of the form Action-Object and should describe what the method does
 						</li>
-						<li>
+						<li name="param-case">
 							Parameters should use camelCase.
 						</li>
-						<li>
+						<li name="method-comments">
 							Comments all methods. Briefly describe the intended behaviour. Note any assumptions and non-standard patterns. 
 						</li>
-<pre>
+<pre name="naming-examples-c">
 /// &lt;summary&gt;
 /// Retrieves an object based on an identifier
 /// &lt;/summary&gt;
@@ -78,6 +78,56 @@ public class MyObject{
 						</li>
 					</ul>
 				</li>
+				<li>
+					<h5>Client-side (Javascript)</h5>
+					<ul name="naming-js">
+						<li name="variable-names-js">
+							As with the server-side, use camelCase for variables names, avoid abbreviations.<br/>
+							Use ALL_CAPS for constants; use underscores to separate words
+						</li>
+						<li name="string-format">
+							Use single quotes (') for strings. This avoids having to escape double quotes when writing HTML strings.
+						</li>
+						<li name="no-globals">
+							Avoid using the global namespace! Globals can be inadvertedly overwritten and can have unexpected side-effects.<br/>
+							If access to a value is required elsewhere in the app, use the <code>repree.[componentname]</code> namespace.
+<pre>
+//define the repree namespace
+var repree = repree || {}; 
+//define the component namespace within repree
+repree.Tasks = repree.Tasks || {}; 
+//define your object within the component namespace
+repree.Tasks.DEFAULT_DATE = "01/01/1900" 
+</pre>
+						</li>
+						<li name="backbone-naming">
+							Use PascalCase for objects that inherit from Backbone. Suffix the names with Model, Collection, View, etc. to indicate the type.<br/>
+							Use camelCase for instances of the objects.<br/>
+							See the item above on namespacing to group Backbone objects by component if necessary
+						
+<pre>
+repree.Forms.FormTemplateModel = Backbone.Model.extend({
+	...
+});
+
+repree.Forms.FormTemplateCollection = Backbone.Collection.extend({
+	...
+});
+
+repree.Forms.FormTemplateView = Backbone.Collection.extend({
+	...
+});
+
+//when instantiating
+var forms = new FormTemplateCollection({model: FormTemplateModel});
+var formView = new FormTemplateView({
+	el: $('...'), 
+	collection: forms
+});
+</pre>
+						</li>
+					</ul>
+				</li>
 			</ul>
 		</div>
 		
@@ -85,18 +135,106 @@ public class MyObject{
 		<div id="CodeStyle">
 			<a name="code-style"></a>
 			<h3>Code Style</h3>
-			<p>Under Development</p>
+			<ul>
+				<li>
+					<h5>General (C# & Javascript)</h5>
+					<ul name="code-style-general">
+						<li name="multiline-comment">
+							Use <code>/* ... */</code> for multiline comments
+						</li>
+						<li name="single-line-comment">
+							Use <code>//</code> for single-line comments. Single line comments should be above the line that they are referencing and should be preceeded by a space.
+						</li>
+						<li name="comment-usage">
+							Comments should be used to document assumptions and potentially non-intuitive behaviour.
+						</li>
+<pre name="comment-example">
+//Bad
+var a = 0; //Sets a to 0
+
+//Bad
+var a = 0;
+//Sets b to a
+var b = a;
+
+//Good
+var a = 0;
+
+//Cache the current value of a in b to retain initial value
+var b = a;
+</pre>
+						<li name="dry-principle">
+							Follow the DRY (Don't Repeat Yourself) principle. If you need to do something more than once, consider splitting it out into 
+							a new method or function. This way, if an error is found, it only needs to be fixed in one place. 
+							This also makes the codebase shorter and easier to read
+						</li>
+						<li name="short-methods">
+							Aim to create short methods/functions. If you can't see the entire method/function in a single screen, consider breaking it up.
+							This makes the code easier to read and understand.
+						</li>
+						<li name="no-side-effects">
+							Avoid creating creating methods/functions with side effects -- 
+							that is a) given a set of inputs, the function will always produce the same output and 
+							b) values outside the scope of the method/function are not altered
+<pre>
+//Bad
+function foo(a, b){
+	return a + b + outsideVar;
+}
+
+//Bad
+function foo(a,b){
+	ousideVar = a + b;
+	return "Done";
+}
+
+//Good
+function foo(a,b){
+	return a + b;
+}
+</pre>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<h5>Server-side (C#)</h5>
+					<ul name="code-style-c">
+						<li></li>
+					</ul>
+				</li>
+				<li>
+					<h5>Client-side (Javascript)</h5>
+					<ul name="code-style-js">
+						<li  name="cache-selectors">
+							Following the DRY principle, cache selectors that you use more than once. 
+							This improves performance as the DOM does not need to be traversed each time the selector is called.<br/>
+							Proposed suggestion - prefix your cached jQuery selectors with <code>$</code> to signal their use.
+<pre>
+//Bad
+$('#TargetElement').text('New Text');
+$('#TargetElement').css('color','blue');
+$('#TargetElement').show();
+
+//Good
+var $targetEl = $('#TargetElement');
+$targetEl.text('New Text');
+$targetEl.css('color','blue');
+$targetEl.show();
+</pre>
+						</li>
+					</ul>
+				</li>
+			</ul>
 		</div>
 		
 		<div id="DesignPatterns">
 			<a name="design-patterns"></a>
-			<h3>Design Patterns</h3>
-			<p>Under Development</p>
+			<h3>Patterns</h3>
 			<ul>
 				<li>
 					<h5>Server-side (C#)</h5>
-					<ul>
-						<li>
+					<ul name="patterns-c">
+						<li name="exception-handling">
 							Wrap all code in try-catch blocks for exception handling. If possible handle different exception types 
 							separately in order to provide better feedback.
 <pre>
@@ -116,7 +254,7 @@ catch (Exception e)
 }
 </pre>
 						</li>
-						<li>
+						<li name="custom-exceptions">
 							If required, create your own custom exception classes to help with exception handling.
 <pre>
 public class EmployeeListNotFoundException: Exception
@@ -137,7 +275,7 @@ public class EmployeeListNotFoundException: Exception
 }
 </pre>
 						</li>
-						<li>
+						<li name="explicit-handling">
 							Where possible handle potential issues explicitly without the use of exceptions as exception handling is slow. 
 							Exception handling should capture unexpected and erroneous behaviour.
 <pre>
@@ -158,17 +296,17 @@ catch (Exception e)
 }
 </pre>
 						</li>
-						<li>
+						<li name="log-error">
 							Log all exceptions with a call to <code>Error.LogError([message], [exception], [parameters])</code><br/>
 							This automatically sends exceptions to the Glip notification channel, App Insight, and to the EventLog.<br/>
 							Note that parameters can be logged to App Insights via a <code>Dictionary&lt;string,string&gt;</code> object.
 							Use this to include data that may be useful for troubleshooting purposes. Err on the side of including too much rather than too little!
 						</li>
-						<li>
+						<li name="db-access-pattern">
 							When accessing the database, use the <code> using (var db = new repreeContext()){...} </code> pattern unless 
 							there is a specific reason (e.g. performance, caching, etc.) to maintain a long-running dbcontext.
 						</li>
-						<li>
+						<li name="data-layer-usage">
 							Do not query the database directly from the Controller class. All db operations should be made from the data layer<br/>
 <pre>
 public class SampleController : Controller
@@ -197,6 +335,21 @@ public class UserData
 	...
 }
 </pre>
+						</li>
+						<li name="return-json">
+							When returning JSON data, use the <code>GenericResponse</code> class. The class is defined as follows:
+<pre>
+public class GenericResponse {
+	public bool success {get; set;}
+	public string message {get; set;}
+	public object data {get; set;}
+	
+	//constructor methods
+	...
+}
+</pre>
+							Establishing consistency on the return format will
+							make it easier to write the client-side handler code.
 						</li>
 					</ul>
 				</li>
