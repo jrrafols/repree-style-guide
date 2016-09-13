@@ -21,7 +21,7 @@
 			<ul>
 				<li><a href="#naming-conventions">Naming Conventions</a></li>
 				<li><a href="#code-style">Code Style</a></li>
-				<li><a href="#design-patterns">Design Patterns</a></li>
+				<li><a href="#design-patterns">Patterns</a></li>
 			</ul>
 		</p>
 		<div id="NamingConventions">
@@ -254,6 +254,11 @@ catch (Exception e)
 }
 </pre>
 						</li>
+						<li name="controller-exceptions">
+							If an exception is caught in a controller method, include <code>Response.StatusCode = 500;</code> 
+							(or another <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank">HTTP Status Code</a> if appropriate)
+							before returning a response. This allows us to leverage the <code>error</code> callback on the client-side AJAX request.<br/>
+						</li>
 						<li name="custom-exceptions">
 							If required, create your own custom exception classes to help with exception handling.
 <pre>
@@ -351,6 +356,9 @@ public class GenericResponse {
 							Establishing consistency on the return format will
 							make it easier to write the client-side handler code.
 						</li>
+						<li name="queues">
+							For long-running operations, use Azure Service Bus queues to assign jobs to the WorkerRole for processing.
+						</li>
 					</ul>
 				</li>
 			</ul>
@@ -362,6 +370,10 @@ public class GenericResponse {
 				<li><a href="https://github.com/airbnb/javascript" target="_blank">AirBnb Javascript Style Guide</a>
 				<li><a href="https://blogs.msdn.microsoft.com/brada/2005/01/26/internal-coding-guidelines/" target="_blank">Microsoft Internal Coding Guidelines</a>
 			</ul>
+		</div>
+		
+		<div>
+			Last Updated - Sept 13, 2016
 		</div>
 	</div>
 </body>
